@@ -34,13 +34,10 @@ pub fn handler_get_public_key(comm: &mut Comm, display: bool) -> Result<(), AppS
     let path_len = read_bip32_path(data, &mut path)?;
 
     let bls_sk = BLSPrivateKey::derive_from_path(&path[..path_len]);
+    testing::debug_print("BLS SK derived!\n");
 
     let pk = bls_sk.public_key().map_err(|_| AppSW::PubKeyDerivFail)?;
-    testing::debug_print("BLS PK derived!");
-
-    let mut addr_value_buf = [0u8; crate::utils::BUFFER_LEN_FOR_PK_BYTES_TO_DISPLAY];
-    let addr_hex = crate::utils::addr_hex_for_ui(&pk.pubkey, &mut addr_value_buf)?;
-    testing::debug_print(addr_hex);
+    testing::debug_print("BLS PK derived!\n");
 
     // Display address on device if requested
     if display {
@@ -52,7 +49,6 @@ pub fn handler_get_public_key(comm: &mut Comm, display: bool) -> Result<(), AppS
         testing::debug_print("shown and approved\n");
     }
 
-    comm.append(&[pk.pubkey.len() as u8]);
     comm.append(&pk.pubkey);
     // Rust SDK key derivation API does not return chaincode yet
     // so we just append a dummy chaincode.

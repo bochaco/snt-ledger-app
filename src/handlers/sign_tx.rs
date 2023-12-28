@@ -110,8 +110,8 @@ pub fn handler_sign_tx(
 }
 
 fn compute_signature_and_append(comm: &mut Comm, ctx: &mut TxContext) -> Result<(), AppSW> {
-    let mut bls_sk = BLSPrivateKey::derive_from_path(&ctx.path[..ctx.path_len]);
-    testing::debug_print("BLS SK derived!");
+    let bls_sk = BLSPrivateKey::derive_from_path(&ctx.path[..ctx.path_len]);
+    testing::debug_print("BLS SK derived!\n");
 
     let hash = bls_sk
         .hash_to_field(&ctx.raw_spend, DOMAIN_SEPARATION_TAG)
@@ -119,14 +119,15 @@ fn compute_signature_and_append(comm: &mut Comm, ctx: &mut TxContext) -> Result<
 
     let (sig, siglen) = bls_sk.sign(&hash).map_err(|_| AppSW::TxSignFail)?;
 
-    comm.append(&[siglen as u8]);
     comm.append(&sig[..siglen as usize]);
+    //comm.append(&bls_pk.pubkey);
+    comm.append(&[0u8; 48]);
 
     Ok(())
 }
 
 fn deserialise_spend_from_slice(spend_bytes: &[u8]) -> Result<Spend, AppSW> {
-    testing::debug_print("deserialising Spend...");
+    testing::debug_print("deserialising Spend...\n");
 
     let unique_pubkey = deserialize_pubkey_from_slice(&spend_bytes)?;
 
@@ -149,6 +150,8 @@ fn deserialise_spend_from_slice(spend_bytes: &[u8]) -> Result<Spend, AppSW> {
         token,
         parent_tx,
     };
+
+    testing::debug_print("Spend deserialised!\n");
 
     Ok(spend)
 }

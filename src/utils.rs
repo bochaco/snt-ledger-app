@@ -9,7 +9,7 @@ pub const MAX_ALLOWED_PATH_LEN: usize = 10;
 pub const BUFFER_LEN_FOR_PK_BYTES_TO_DISPLAY: usize = 4 + 4 * PK_BYTES_TO_DISPLAY;
 
 // Display only the first and last PK_BYTES_TO_DISPLAY bytes of the address
-const PK_BYTES_TO_DISPLAY: usize = 2;
+const PK_BYTES_TO_DISPLAY: usize = 3;
 
 /// Convert serialized derivation path to u32 array elements
 pub fn read_bip32_path(data: &[u8], path: &mut [u32]) -> Result<usize, AppSW> {
